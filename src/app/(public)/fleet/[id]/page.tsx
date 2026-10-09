@@ -10,13 +10,15 @@ import { addDays, blockedRange, BUFFER_DAYS, todayUtc, toDateOnlyString } from '
 
 export const dynamic = 'force-dynamic';
 
-export async function generateMetadata({ params }: { params: { id: string } }): Promise<Metadata> {
-  const item = await prisma.fleetItem.findUnique({ where: { id: params.id }, select: { name: true, isActive: true } });
+export async function generateMetadata({ params }: { params: Promise<{ id: string }> | { id: string } }): Promise<Metadata> {
+  const { id } = await params;
+  const item = await prisma.fleetItem.findUnique({ where: { id }, select: { name: true, isActive: true } });
   return { title: item?.isActive ? item.name : 'Not found' };
 }
 
-export default async function FleetDetailPage({ params }: { params: { id: string } }) {
-  const item = await prisma.fleetItem.findUnique({ where: { id: params.id } });
+export default async function FleetDetailPage({ params }: { params: Promise<{ id: string }> | { id: string } }) {
+  const { id } = await params;
+  const item = await prisma.fleetItem.findUnique({ where: { id } });
   if (!item || !item.isActive) notFound();
 
   const session = await getSession();

@@ -9,9 +9,10 @@ export const metadata = { title: 'Bookings' };
 const filters = [undefined, 'PENDING', 'CONFIRMED', 'CANCELLED'] as const;
 const label = { PENDING: 'Pending', CONFIRMED: 'Confirmed', CANCELLED: 'Cancelled' };
 
-export default async function AdminBookingsPage({ searchParams }: { searchParams: { status?: string } }) {
+export default async function AdminBookingsPage({ searchParams }: { searchParams?: Promise<{ status?: string }> | { status?: string } }) {
   await requireAdmin();
-  const status = searchParams.status === 'PENDING' || searchParams.status === 'CONFIRMED' || searchParams.status === 'CANCELLED' ? searchParams.status : undefined;
+  const sp = (await searchParams) ?? {};
+  const status = sp.status === 'PENDING' || sp.status === 'CONFIRMED' || sp.status === 'CANCELLED' ? sp.status : undefined;
   const bookings = await prisma.booking.findMany({
     where: status ? { status } : undefined,
     orderBy: { createdAt: 'desc' },

@@ -13,8 +13,9 @@ const tabs = [
   { key: 'YACHT', label: COLLECTION_LABEL.YACHT },
 ] as const;
 
-export default async function FleetPage({ searchParams }: { searchParams: { collection?: string } }) {
-  const collection = isCollection(searchParams.collection) ? searchParams.collection : undefined;
+export default async function FleetPage({ searchParams }: { searchParams?: Promise<{ collection?: string }> | { collection?: string } }) {
+  const sp = (await searchParams) ?? {};
+  const collection = isCollection(sp.collection) ? sp.collection : undefined;
   const [items, busy] = await Promise.all([
     prisma.fleetItem.findMany({
       where: { isActive: true, ...(collection ? { collection } : {}) },

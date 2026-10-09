@@ -5,9 +5,10 @@ import { FleetForm } from '@/components/admin/FleetForm';
 
 export const metadata = { title: 'Edit fleet item' };
 
-export default async function EditFleetItemPage({ params }: { params: { id: string } }) {
+export default async function EditFleetItemPage({ params }: { params: Promise<{ id: string }> | { id: string } }) {
   await requireAdmin();
-  const item = await prisma.fleetItem.findUnique({ where: { id: params.id } });
+  const { id } = await params;
+  const item = await prisma.fleetItem.findUnique({ where: { id } });
   if (!item) notFound();
   return (
     <>
