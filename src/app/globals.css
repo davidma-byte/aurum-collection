@@ -1,0 +1,77 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: dark;
+}
+
+html {
+  background: #111111;
+  scroll-behavior: smooth;
+}
+
+body {
+  @apply bg-ink text-ivory font-sans antialiased;
+}
+
+::selection {
+  background: #D4B05C;
+  color: #111111;
+}
+
+:focus-visible {
+  outline: 2px solid #D4B05C;
+  outline-offset: 2px;
+}
+
+@layer components {
+  .hairline {
+    @apply border border-gold/30;
+  }
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 px-6 py-3 text-sm font-medium tracking-wide transition-colors duration-200 disabled:cursor-not-allowed disabled:opacity-60;
+  }
+  .btn-gold {
+    @apply btn bg-gold text-ink hover:bg-gold-soft;
+  }
+  .btn-ghost {
+    @apply btn border border-gold/50 text-gold-soft hover:border-gold hover:bg-gold/10;
+  }
+  .btn-danger {
+    @apply btn border border-red-400/50 text-red-300 hover:bg-red-400/10;
+  }
+  .field {
+    @apply w-full border border-gold/25 bg-ink/60 px-4 py-3 text-ivory placeholder:text-ivory-dim/50 transition-colors focus:border-gold focus:outline-none focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-gold;
+  }
+  .field-error {
+    @apply border-red-400/70;
+  }
+  .link-gold {
+    @apply relative text-ivory transition-colors hover:text-gold-soft;
+    background: linear-gradient(currentColor, currentColor) 0 100% / 0 1px no-repeat;
+    transition: background-size 0.25s ease, color 0.2s ease;
+  }
+  .link-gold:hover {
+    background-size: 100% 1px;
+  }
+  .prose-pre {
+    white-space: pre-line;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+@keyframes swap-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.swap-in {
+  animation: swap-in 0.35s ease both;
+}
