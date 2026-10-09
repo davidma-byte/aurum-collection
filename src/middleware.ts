@@ -7,8 +7,15 @@ import { getToken } from 'next-auth/jwt';
  */
 export async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
-  const isSecure = req.nextUrl.protocol === 'https:' || Boolean(process.env.NEXTAUTH_URL?.startsWith('https://'));
-  const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET, secureCookie: isSecure });
+  const isSecure =
+    req.nextUrl.protocol === 'https:' ||
+    Boolean(process.env.NEXTAUTH_URL?.startsWith('https://')) ||
+    Boolean(process.env.VERCEL_URL);
+  const token = await getToken({
+    req,
+    secret: process.env.NEXTAUTH_SECRET || 'aurum-collection-ultra-secure-jwt-secret-key-2026-production',
+    secureCookie: isSecure,
+  });
   const isAdmin = token?.role === 'ADMIN';
 
   if (pathname.startsWith('/api/admin')) {

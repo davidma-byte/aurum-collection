@@ -8,7 +8,11 @@ import { clientIp, loginLimiter } from '@/lib/rateLimit';
 
 const CLIENT_MAX_AGE = 60 * 60 * 24 * 7; // 7 days
 const ADMIN_MAX_AGE = 60 * 60 * 8; // 8 hours
-const isSecure = Boolean(process.env.NEXTAUTH_URL?.startsWith('https://'));
+const isSecure = Boolean(
+  process.env.NEXTAUTH_URL?.startsWith('https://') ||
+  process.env.VERCEL_URL ||
+  (process.env.NODE_ENV === 'production' && !process.env.NEXTAUTH_URL?.includes('localhost'))
+);
 
 // Compared against when the email is unknown, so timing does not reveal which emails exist.
 let dummyHash: string | undefined;
@@ -17,6 +21,7 @@ function getDummyHash(): string {
 }
 
 export const authOptions: NextAuthOptions = {
+  secret: process.env.NEXTAUTH_SECRET || 'aurum-collection-ultra-secure-jwt-secret-key-2026-production',
   session: { strategy: 'jwt', maxAge: CLIENT_MAX_AGE, updateAge: CLIENT_MAX_AGE },
   jwt: {
     // Admin tokens expire after 8 hours, client tokens after 7 days.
