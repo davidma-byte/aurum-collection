@@ -1,4 +1,11 @@
 import { PrismaClient } from '@prisma/client';
+import dns from 'node:dns';
+
+try {
+  dns.setDefaultResultOrder('ipv4first');
+} catch {
+  // Ignore in environments where setDefaultResultOrder is unavailable
+}
 
 const globalForPrisma = globalThis as unknown as { prisma?: PrismaClient };
 
@@ -15,13 +22,13 @@ function sanitizeUrl(url: string | undefined): string | undefined {
     clean += (clean.includes('?') ? '&' : '?') + 'connect_timeout=30';
   }
   if (clean.includes('-pooler') && !clean.includes('pgbouncer=')) {
-    clean += (clean.includes('?') ? '&' : '?') + 'pgbouncer=true';
+    clean += '&pgbouncer=true';
   }
   return clean;
 }
 
 const fallbackUrl =
-  'postgresql://neondb_owner:npg_A9eTUGMiDc1j@ep-misty-sea-b5gd3vbe-pooler.c-7.us-east-2.aws.neon.tech/aurum?sslmode=require&pgbouncer=true&connect_timeout=30';
+  'postgresql://neondb_owner:npg_A9eTUGMiDc1j@ep-misty-sea-b5gd3vbe.c-7.us-east-2.aws.neon.tech/aurum?sslmode=require&connect_timeout=30';
 
 const dbUrl = sanitizeUrl(process.env.DATABASE_URL) || fallbackUrl;
 process.env.DATABASE_URL = dbUrl;
